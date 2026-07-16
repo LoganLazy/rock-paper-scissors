@@ -1,0 +1,734 @@
+* {
+  box-sizing: border-box;
+}
+
+/* CSS 变量系统 - 亮色主题 */
+:root {
+  --bg-gradient-start: #ffe1ec;
+  --bg-gradient-mid: #fff7fb;
+  --bg-gradient-end: #e8f1ff;
+  --text-primary: #352636;
+  --text-secondary: #75566a;
+  --text-muted: #85697a;
+  --card-bg: rgba(255, 255, 255, 0.62);
+  --card-border: rgba(255, 255, 255, 0.8);
+  --button-bg: #fff;
+  --input-bg: rgba(255, 255, 255, 0.75);
+  --input-border: rgba(119, 72, 98, 0.18);
+  --accent-primary: #ff6ca8;
+  --accent-secondary: #ff9472;
+  --shadow-color: rgba(126, 77, 105, 0.14);
+}
+
+/* 暗色主题 */
+[data-theme="dark"] {
+  --bg-gradient-start: #1a1625;
+  --bg-gradient-mid: #2d1b2e;
+  --bg-gradient-end: #1a1a2e;
+  --text-primary: #e8e1e8;
+  --text-secondary: #b8a5b3;
+  --text-muted: #8a7585;
+  --card-bg: rgba(40, 40, 50, 0.62);
+  --card-border: rgba(80, 80, 90, 0.8);
+  --button-bg: rgba(60, 60, 70, 0.8);
+  --input-bg: rgba(40, 40, 50, 0.75);
+  --input-border: rgba(119, 72, 98, 0.3);
+  --accent-primary: #ff6ca8;
+  --accent-secondary: #ff9472;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(160deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 52%, var(--bg-gradient-end) 100%);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: 18px;
+  padding: 13px 16px;
+  background: var(--button-bg);
+  color: var(--text-primary);
+  box-shadow: 0 8px 24px rgba(110, 64, 91, 0.12);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform 0.1s ease, background 0.3s ease;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--input-border);
+  border-radius: 16px;
+  padding: 13px 14px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  outline: none;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.app {
+  width: min(100%, 480px);
+  margin: 0 auto;
+  padding: 18px 14px 36px;
+}
+
+.card {
+  margin-top: 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  padding: 18px;
+  background: var(--card-bg);
+  box-shadow: 0 18px 50px var(--shadow-color);
+  backdrop-filter: blur(18px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+}
+
+.hero {
+  padding: 24px 20px;
+}
+
+.hero h1 {
+  margin: 8px 0;
+  font-size: 34px;
+  line-height: 1.05;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.eyebrow {
+  color: var(--accent-primary) !important;
+  font-weight: 700;
+}
+
+.lobby {
+  display: grid;
+  gap: 16px;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.segmented button {
+  padding: 11px 8px;
+  font-size: 13px;
+}
+
+.segmented .active,
+.primary {
+  background: linear-gradient(135deg, #ff6ca8, #ff9472);
+  color: white;
+  font-weight: 700;
+}
+
+.join-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.room-card,
+.score-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.room-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 24px;
+  letter-spacing: 0.12em;
+}
+
+.muted {
+  color: #85697a;
+  font-size: 14px;
+}
+
+.player-box {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+
+.player-box strong {
+  font-size: 34px;
+}
+
+.versus {
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #fff4f8;
+  color: #ff5f9b;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.notice {
+  color: #75566a;
+}
+
+.game-card {
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+.game-card h2,
+.punishment-card h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.choices button {
+  display: grid;
+  gap: 8px;
+  place-items: center;
+  min-height: 108px;
+  font-weight: 700;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.choices span {
+  font-size: 34px;
+  pointer-events: none;
+}
+
+.choices .chosen {
+  background: #fff1f7;
+  outline: 2px solid #ff7aaa;
+}
+
+/* 卡片悬浮效果 */
+.card {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 28px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 18px 50px rgba(126, 77, 105, 0.14);
+  backdrop-filter: blur(18px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 60px rgba(126, 77, 105, 0.18);
+}
+
+.round-result {
+  border-radius: 18px;
+  padding: 12px;
+  background: #fff8fb;
+  color: #75566a;
+}
+
+.punishment-card {
+  display: grid;
+  gap: 16px;
+  text-align: center;
+}
+
+.wheel {
+  width: 210px;
+  height: 210px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(from 20deg, #ff7aaa, #ffd166, #7bdff2, #b2f7ef, #ff7aaa);
+  box-shadow: inset 0 0 0 14px rgba(255, 255, 255, 0.5), 0 18px 50px rgba(255, 105, 150, 0.28);
+}
+
+.wheel > div {
+  width: 132px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  border-radius: 50%;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+}
+
+.wheel span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6e4d61;
+}
+
+.level-banner {
+  display: grid;
+  gap: 6px;
+  border-radius: 18px;
+  padding: 12px;
+  background: #fff4f8;
+  color: #6e4d61;
+  text-align: left;
+}
+
+.level-banner span {
+  font-size: 13px;
+  color: #85697a;
+}
+
+.custom-row {
+  display: grid;
+  grid-template-columns: 108px 1fr auto;
+  gap: 8px;
+}
+
+@media (max-width: 390px) {
+  .custom-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.custom-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.custom-list button {
+  padding: 9px 12px;
+  font-size: 13px;
+  background: #fff4f8;
+}
+
+.rematch-box {
+  display: grid;
+  gap: 10px;
+}
+
+.spinning {
+  animation: spin 0.42s linear infinite;
+}
+
+.error {
+  margin: 14px 0 0;
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #ffe9e9;
+  color: #bf3150;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 连接状态指示器 */
+.connection-status {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 1000;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-connected .status-dot {
+  background: #22c55e;
+}
+
+.status-disconnected .status-dot {
+  background: #ef4444;
+}
+
+.status-connecting .status-dot {
+  background: #ffa500;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.status-reconnecting .status-dot {
+  background: #ff6b6b;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* 设置栏 */
+.settings-bar {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+}
+
+.sound-toggle,
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: var(--button-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+/* Toast 提示 */
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1001;
+  max-width: 320px;
+}
+
+.toast {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  animation: toast-in 0.3s ease-out;
+}
+
+.toast-success {
+  background: linear-gradient(135deg, #b2f7ef, #7bdff2);
+  color: #1a535c;
+  font-weight: 600;
+}
+
+.toast-error {
+  background: linear-gradient(135deg, #ffe9e9, #ffc9c9);
+  color: #bf3150;
+  font-weight: 600;
+}
+
+.toast-info {
+  background: rgba(255, 255, 255, 0.95);
+  color: #352636;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 错误边界 */
+.error-boundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.error-boundary .card {
+  max-width: 480px;
+  text-align: center;
+}
+
+.error-boundary h2 {
+  margin: 0 0 12px;
+  color: #bf3150;
+}
+
+/* 错误文本 */
+.error-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #bf3150;
+}
+
+/* 历史记录 */
+.history-card {
+  margin-top: 14px;
+}
+
+.history-toggle {
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  background: transparent;
+  box-shadow: none;
+  font-weight: 600;
+  color: #75566a;
+}
+
+.history-list {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff8fb;
+  font-size: 14px;
+}
+
+.round-number {
+  color: #85697a;
+  font-weight: 600;
+}
+
+.round-choices {
+  font-size: 18px;
+  text-align: center;
+}
+
+.round-winner {
+  color: #ff5f9b;
+  font-weight: 700;
+}
+
+.round-winner.draw {
+  color: #85697a;
+}
+
+/* 转盘结果弹出动画 */
+.wheel.result-shown {
+  animation: wheel-result 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes wheel-result {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 移动端优化 */
+@media (max-width: 320px) {
+  .custom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-row select,
+  .custom-row input,
+  .custom-row button {
+    width: 100%;
+  }
+
+  .wheel {
+    width: 180px;
+    height: 180px;
+  }
+
+  .wheel > div {
+    width: 120px;
+    height: 120px;
+    padding: 12px;
+  }
+
+  .wheel span {
+    font-size: 12px;
+  }
+
+  .choices button {
+    min-height: 90px;
+    font-size: 14px;
+  }
+
+  .choices span {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .connection-status {
+    top: 12px;
+    right: 12px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .settings-bar {
+    top: 12px;
+    left: 12px;
+  }
+
+  .sound-toggle {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .toast-container {
+    top: 70px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+  }
+}
+
+/* 游戏统计样式 */
+.stats-content {
+  margin-top: 12px;
+  display: grid;
+  gap: 16px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fff8fb;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #85697a;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #352636;
+}
+
+.stat-win {
+  color: #22c55e;
+}
+
+.stat-lose {
+  color: #ef4444;
+}
+
+.stat-draw {
+  color: #85697a;
+}
+
+.stats-preferences {
+  display: grid;
+  gap: 8px;
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff8fb;
+  font-size: 14px;
+}
+
+.preference-label {
+  color: #75566a;
+}
+
+.preference-value {
+  font-weight: 700;
+  color: #352636;
+}
+
+@media (max-width: 420px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

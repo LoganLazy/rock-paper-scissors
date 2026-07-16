@@ -1,0 +1,23 @@
+{
+  "name": "石头剪刀布 - 趣味惩罚小游戏",
+  "short_name": "石头剪刀布",
+  "description": "在线1v1石头剪刀布游戏，输了转趣味惩罚盘",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffe1ec",
+  "theme_color": "#ff6ca8",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

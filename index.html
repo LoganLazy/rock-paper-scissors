@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 基础信息 -->
+    <title>石头剪刀布 - 趣味惩罚小游戏</title>
+    <meta name="description" content="在线1v1石头剪刀布游戏，输了转趣味惩罚盘，支持自定义惩罚，适合情侣朋友一起玩" />
+    <meta name="keywords" content="石头剪刀布,猜拳游戏,惩罚转盘,情侣游戏,在线游戏" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph / 微信分享 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="石头剪刀布 - 趣味惩罚小游戏" />
+    <meta property="og:description" content="在线1v1石头剪刀布游戏，输了转趣味惩罚盘" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- PWA 支持 -->
+    <meta name="theme-color" content="#ff6ca8" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- 骨架屏样式 -->
+    <style>
+      #root:empty::before {
+        content: "";
+        display: block;
+        width: min(100%, 480px);
+        margin: 80px auto 0;
+        padding: 0 14px;
+      }
+
+      #root:empty::after {
+        content: "";
+        display: block;
+        width: min(calc(100% - 28px), 452px);
+        height: 200px;
+        margin: 20px auto;
+        background: linear-gradient(90deg, #f5f5f5 25%, #e8e8e8 50%, #f5f5f5 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite ease-in-out;
+        border-radius: 28px;
+      }
+
+      @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

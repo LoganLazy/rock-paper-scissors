@@ -1,0 +1,59 @@
+# 添加构建产物目录到 .dockerignore
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Git
+.git/
+.gitignore
+
+# 开发文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 测试和覆盖率
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# 环境文件
+.env
+.env*.local
+
+# 日志
+logs/
+*.log
+
+# OS 文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp
+.cache/
+
+# PM2
+.pm2/
+
+# 文档（构建时不需要）
+docs/
+*.md
+!README.md
+
+# 调试文件
+debug-*.js
+test-*.js
+*.test.js
+*.spec.js
+
+# Docker 相关
+Dockerfile
+docker-compose.yml
+.dockerignore

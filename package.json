@@ -1,0 +1,61 @@
+{
+  "name": "rock-paper-scissors-couple",
+  "version": "0.2.0",
+  "description": "多人在线石头剪刀布游戏，支持自定义惩罚、断线重连、移动端适配 | Multiplayer Rock-Paper-Scissors game with WebSocket",
+  "author": "LoganLazy <lazyease@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "keywords": [
+    "rock-paper-scissors",
+    "multiplayer-game",
+    "websocket",
+    "react",
+    "vite",
+    "nodejs",
+    "couple-game",
+    "realtime-game"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LoganLazy/rock-paper-scissors.git"
+  },
+  "homepage": "https://github.com/LoganLazy/rock-paper-scissors#readme",
+  "bugs": {
+    "url": "https://github.com/LoganLazy/rock-paper-scissors/issues"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "server": "node server/index.js",
+    "start": "concurrently \"npm run server\" \"npm run dev\"",
+    "build": "vite build",
+    "serve": "npm run server",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "docker:build": "docker build -t rock-paper-scissors:latest .",
+    "docker:run": "docker run -d -p 8787:8787 --name rock-paper-scissors rock-paper-scissors:latest",
+    "docker:stop": "docker stop rock-paper-scissors && docker rm rock-paper-scissors",
+    "docker:compose": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "concurrently": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "ws": "latest"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "@playwright/test": "^1.40.0",
+    "jsdom": "^23.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
