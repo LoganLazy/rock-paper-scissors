@@ -1,6 +1,6 @@
 {
   "name": "rock-paper-scissors-couple",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "多人在线石头剪刀布游戏，支持自定义惩罚、断线重连、移动端适配 | Multiplayer Rock-Paper-Scissors game with WebSocket",
   "author": "LoganLazy <lazyease@gmail.com>",
   "license": "MIT",
@@ -30,7 +30,8 @@
     "start": "concurrently \"npm run server\" \"npm run dev\"",
     "build": "vite build",
     "serve": "npm run server",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:server": "node --test test/server.test.mjs",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

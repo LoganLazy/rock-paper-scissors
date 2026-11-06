@@ -68,7 +68,7 @@ describe('validateCustomPunishment', () => {
   });
 
   it('should reject too long punishments', () => {
-    const longText = '这是一个非常非常非常非常非常非常非常非常非常非常长的惩罚文本';
+    const longText = '这是一个很长的惩罚'.repeat(5); // 45 个字符，超过 40 字上限
     const result = validateCustomPunishment(longText);
     expect(result.valid).toBe(false);
   });

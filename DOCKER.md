@@ -80,7 +80,7 @@ environment:
 
 - **8787**: WebSocket 后端端口
 - **80**: HTTP 端口（通过 Nginx）
-- **443**: HTTPS 端口（可选，需要配置 SSL 证书）
+- **443**: HTTPS 端口（默认不映射；启用 HTTPS 时在 `docker-compose.yml` 的 nginx 服务中加回 `443:443` 映射，见下文 HTTPS 配置）
 
 ### 数据卷
 
@@ -280,13 +280,7 @@ services:
 
 ### 2. 使用非 root 用户
 
-修改 `Dockerfile`，添加：
-
-```dockerfile
-# 创建非 root 用户
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
-USER nodejs
-```
+Dockerfile 已使用 `node:18-alpine` 自带的 `node` 用户运行（`USER node`），无需再创建用户。
 
 ### 3. 定期更新基础镜像
 
@@ -473,7 +467,7 @@ Dockerfile 已经使用多阶段构建，生产镜像只包含必要文件：
 - [ ] `nginx.conf` 中的域名已修改
 - [ ] 防火墙规则已配置
 - [ ] Docker 和 Docker Compose 已安装
-- [ ] 端口 80, 443, 8787 未被占用
+- [ ] 端口 80、8787 未被占用（启用 HTTPS 时还需 443）
 
 ---
 

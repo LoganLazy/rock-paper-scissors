@@ -1,6 +1,6 @@
 # 🎮 Rock-Paper-Scissors
 
-[![Version](https://img.shields.io/badge/version-0.2.0-blue)](https://github.com/LoganLazy/rock-paper-scissors)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/LoganLazy/rock-paper-scissors)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![React](https://img.shields.io/badge/React-19.2.7-61DAFB?logo=react)](https://react.dev)
 [![Node](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)](https://nodejs.org)
@@ -11,11 +11,7 @@
 
 一个基于 **React** + **WebSocket** 的实时多人对战游戏，专为情侣和朋友设计，输了要接受惩罚哦！
 
-[在线演示](#) | [快速开始](#快速开始) | [Docker 部署](./DOCKER.md) | [更新日志](./CHANGELOG.md)
-
----
-
-## ✨ 功能特性
+[快速开始](#快速开始) | [Docker 部署](./DOCKER.md) | [更新日志](./CHANGELOG.md)
 
 ---
 
@@ -586,7 +582,6 @@ docker-compose down               # 停止服务
 - [快速开始指南](./QUICKSTART.md)
 - [Docker 部署指南](./DOCKER.md)
 - [更新日志](./CHANGELOG.md)
-- [GitHub 上传检查清单](./GITHUB_CHECKLIST.md)
 
 ---
 

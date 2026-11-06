@@ -16,14 +16,14 @@ export function validateName(name) {
   const trimmed = name.trim();
 
   if (trimmed.length < INPUT_LIMITS.NAME_MIN) {
-    return { valid: false, error: `昵称至少 ${INPUT_LIMITS.NAME_MIN} 个字符` };
+    return { valid: false, error: '昵称长度需为 2-10 个字符' };
   }
 
   if (trimmed.length > INPUT_LIMITS.NAME_MAX) {
-    return { valid: false, error: `昵称最多 ${INPUT_LIMITS.NAME_MAX} 个字符` };
+    return { valid: false, error: '昵称长度需为 2-10 个字符' };
   }
 
-  return { valid: true };
+  return { valid: true, error: '' };
 }
 
 /**
@@ -43,7 +43,7 @@ export function validateRoomCode(code) {
     return { valid: false, error: `房间码必须是 ${INPUT_LIMITS.ROOM_CODE_LENGTH} 位字母或数字` };
   }
 
-  return { valid: true };
+  return { valid: true, error: '' };
 }
 
 /**
@@ -66,7 +66,7 @@ export function validateCustomPunishment(text) {
     return { valid: false, error: `惩罚内容最多 ${INPUT_LIMITS.CUSTOM_PUNISHMENT_MAX} 个字符` };
   }
 
-  return { valid: true };
+  return { valid: true, error: '' };
 }
 
 /**

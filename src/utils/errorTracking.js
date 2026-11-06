@@ -1,6 +1,8 @@
 /**
  * 前端错误追踪和监控
  * 捕获全局错误和未处理的Promise拒绝
+ *
+ * 注意：目前仅在本地 console 记录错误，暂未接入远程错误监控服务。
  */
 
 /**
@@ -22,9 +24,6 @@ export function initErrorTracking() {
 
     console.error('Global error caught:', errorInfo);
 
-    // 可以在这里发送到错误监控服务
-    // sendToErrorService(errorInfo);
-
     // 防止默认错误处理
     return false;
   });
@@ -40,9 +39,6 @@ export function initErrorTracking() {
     };
 
     console.error('Unhandled promise rejection:', errorInfo);
-
-    // 可以在这里发送到错误监控服务
-    // sendToErrorService(errorInfo);
   });
 }
 
@@ -62,21 +58,4 @@ export function reportError(error, context = {}) {
   };
 
   console.error('Error reported:', errorInfo);
-
-  // 可以在这里发送到错误监控服务
-  // sendToErrorService(errorInfo);
 }
-
-/**
- * 发送错误到远程服务（示例）
- * @param {Object} errorInfo
- */
-// function sendToErrorService(errorInfo) {
-//   fetch('/api/log-error', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify(errorInfo),
-//   }).catch(() => {
-//     // 静默失败，不影响主应用
-//   });
-// }
