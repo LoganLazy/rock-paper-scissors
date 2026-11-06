@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, lazy, Suspense } from 'react';
+import React, { useEffect, useState, useMemo, useRef, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
@@ -41,6 +41,9 @@ function App() {
   const [rematchBestOf, setRematchBestOf] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
+  // 上一次收到的房间状态（轮数、阶段），用于判断 state 广播是否意味着新一局开始；
+  // 只有新一局开始时才重置出拳状态，避免对局中其他广播（如加自定义惩罚）清空已出拳
+  const prevRoomRef = useRef({ rounds: -1, status: '' });
   const [soundEnabled, setSoundEnabled] = useState(
     localStorage.getItem(SOUND_CONFIG.ENABLED_KEY) === 'true' || SOUND_CONFIG.DEFAULT_ENABLED
   );
@@ -79,21 +82,33 @@ function App() {
         setRoomCode(message.room.code);
         setReadyIds([]);
         setMyChoice('');
-        ws.saveState(message.playerId, message.room.code, getCurrentPlayerName(message.room, message.playerId));
+        prevRoomRef.current = {
+          rounds: message.room.rounds?.length ?? 0,
+          status: message.room.status,
+        };
+        ws.saveState(message.playerId, message.room.code, getCurrentPlayerName(message.room, message.playerId), message.rejoinToken);
         return;
       }
 
       if (message.type === 'state') {
-        setRoom(message.room);
-        setRoomCode(message.room.code);
-        setReadyIds([]);
-        setMyChoice('');
-        if (!message.room.punishment) {
-          // 重置惩罚轮次在新一轮游戏开始时
-          if (message.room.status === 'playing' && message.room.rounds.length === 0) {
+        const roundsLen = message.room.rounds?.length ?? 0;
+        const prev = prevRoomRef.current;
+        // 只有两种情况算新一局开始：刚判完一局（轮数增加），或新系列开始
+        // （阶段从 waiting/finished 变成 playing 且轮数为空）；其他 state 广播
+        // （如对方加自定义惩罚、确认重赛）只更新房间，不动出拳状态
+        const roundJustFinished = roundsLen > prev.rounds;
+        const seriesJustStarted =
+          message.room.status === 'playing' && prev.status !== 'playing' && roundsLen === 0;
+        if (roundJustFinished || seriesJustStarted) {
+          setReadyIds([]);
+          setMyChoice('');
+          if (!message.room.punishment && seriesJustStarted) {
             setPunishmentRound(1);
           }
         }
+        prevRoomRef.current = { rounds: roundsLen, status: message.room.status };
+        setRoom(message.room);
+        setRoomCode(message.room.code);
         return;
       }
 
@@ -172,7 +187,8 @@ function App() {
 
   // 游戏操作
   const handleChoose = (choice) => {
-    if (!ws.socket || myChoice) return;
+    // 用连接状态判断，不用 ws.socket（ref 不触发渲染，引用不可靠）
+    if (ws.status !== 'connected' || myChoice) return;
     setMyChoice(choice);
     soundManager.play('choose');
     ws.send({ type: 'choose', choice });
@@ -185,13 +201,13 @@ function App() {
   };
 
   const handleAddCustom = (level, text) => {
+    // 不立即弹成功提示：成功时界面随 state 广播自然更新，失败时服务端会返回 error
     ws.send({ type: 'customPunishment', level, text });
-    showToast('已添加自定义惩罚', 'success');
   };
 
   const handleRemoveCustom = (id) => {
+    // 不立即弹成功提示：成功时界面随 state 广播自然更新，失败时服务端会返回 error
     ws.send({ type: 'removeCustomPunishment', id });
-    showToast('已删除', 'success');
   };
 
   // 重赛操作

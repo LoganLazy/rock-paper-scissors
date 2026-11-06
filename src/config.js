@@ -87,9 +87,10 @@ export const ANIMATION_CONFIG = {
  * 构建 WebSocket URL
  */
 export function getWebSocketUrl() {
-  // 开发环境直连后端（绕过 Vite proxy）
+  // 开发环境直连后端（绕过 Vite proxy），用当前主机名而不用 localhost，
+  // 这样同一局域网内的手机也能连上开发机上的后端
   if (window.location.port === '5173') {
-    return 'ws://localhost:8787/ws';
+    return `ws://${window.location.hostname}:8787/ws`;
   }
 
   // 生产环境通过 Nginx 代理

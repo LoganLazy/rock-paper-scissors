@@ -1,6 +1,20 @@
 # 优化更新日志
 
-## 版本 2.0 - 全面优化版本
+## 版本 0.3.0 - 安全与稳定性修复
+
+- **重连冒充修复**：服务端为每位玩家签发 `rejoinToken`（仅发给本人），重连必须同时出示 `playerId` + 凭证，陌生连接无法再顶替他人
+- **出拳锁定**：同一局内已出拳不可更改，服务端拒绝覆盖
+- **惩罚校验**：只有输家可以在系列结束后设置惩罚，每局限一次；内容须为 `{level: L1/L2/L3, text: 1-40 字符}` 对象，否则拒绝
+- **重赛确认**：单人重赛不再重置系列，需双方在线且都确认才重置
+- **一人多房**：同一连接已在房间中时，重复 create/join/rejoin 返回错误
+- **限流与消息大小**：WebSocket `maxPayload` 64KB；`customPunishment` / `removeCustomPunishment` / `rematch` / `punishment` 接入 500ms 限流；单连接 60 秒内最多 5 次 create/join
+- **房间码与 join 报错**：房间码改用 `crypto.randomBytes` 生成；房间不存在与已满统一返回“无法加入该房间”
+- **进程健壮性**：`uncaughtException` 记录后退出（由 PM2 重启）；新增 SIGTERM/SIGINT 优雅退出
+- **前端修复**：state 广播不再无条件清空出拳状态（仅新一局开始时重置）；去掉加/删自定义惩罚的乐观成功提示；开发环境 WebSocket 改用当前主机名，局域网手机可调试；清理 `useWebSocket` 调试日志并用 `useMemo` 固定返回引用；出拳改用连接状态判断；惩罚渲染防御非字符串内容
+- **测试与构建**：修复 4 个失败的 validation 单测（补 `error` 字段、报错文案含 `2-10`、超长用例改为 45 字）；vitest 限定只跑 `src/**/*.test.js`；`npm test` 改为 `vitest run`；新增服务端集成测试 `test/server.test.mjs`（7 个用例）；修复失同步的 `package-lock.json`，`npm ci` 可通过；新增 GitHub Actions CI；Dockerfile 改用 `USER node` 运行
+- **文档与杂项**：README 去重、删死链接与不存在的清单链接、版本号同步到 0.3.0；`index.html` 与 `manifest.json` 移除不存在的图标引用；nginx 默认不再映射 443（HTTPS 需备好证书再启用）
+
+## 版本 0.2.0 - 全面优化版本
 
 ### 🚀 核心功能优化
 

@@ -2,13 +2,14 @@
  * WebSocket 连接管理 Hook
  * 支持自动断线重连、心跳检测、状态持久化
  */
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { getWebSocketUrl, WS_CONFIG } from '../config.js';
 
 const STORAGE_KEYS = {
   PLAYER_ID: 'rps_player_id',
   ROOM_CODE: 'rps_room_code',
   PLAYER_NAME: 'rps_player_name',
+  REJOIN_TOKEN: 'rps_rejoin_token',
 };
 
 /**
@@ -25,8 +26,8 @@ const STORAGE_KEYS = {
  *   disconnect: () => void,
  *   send: (data: any) => void,
  *   onMessage: (handler: Function) => void,
- *   savedState: { playerId: string | null, roomCode: string | null, name: string | null },
- *   saveState: (playerId: string, roomCode: string, name: string) => void,
+ *   savedState: { playerId: string | null, roomCode: string | null, name: string | null, rejoinToken: string | null },
+ *   saveState: (playerId: string, roomCode: string, name: string, rejoinToken?: string) => void,
  *   clearState: () => void,
  * }}
  */
@@ -45,12 +46,15 @@ export function useWebSocket() {
   const [error, setError] = useState('');
 
   /**
-   * 保存状态到 localStorage
+   * 保存状态到 localStorage（重连凭证只存本地，绝不发给除服务端外的任何人）
    */
-  const saveState = useCallback((playerId, roomCode, name) => {
+  const saveState = useCallback((playerId, roomCode, name, rejoinToken) => {
     localStorage.setItem(STORAGE_KEYS.PLAYER_ID, playerId);
     localStorage.setItem(STORAGE_KEYS.ROOM_CODE, roomCode);
     localStorage.setItem(STORAGE_KEYS.PLAYER_NAME, name);
+    if (rejoinToken) {
+      localStorage.setItem(STORAGE_KEYS.REJOIN_TOKEN, rejoinToken);
+    }
   }, []);
 
   /**
@@ -60,6 +64,7 @@ export function useWebSocket() {
     localStorage.removeItem(STORAGE_KEYS.PLAYER_ID);
     localStorage.removeItem(STORAGE_KEYS.ROOM_CODE);
     localStorage.removeItem(STORAGE_KEYS.PLAYER_NAME);
+    localStorage.removeItem(STORAGE_KEYS.REJOIN_TOKEN);
   }, []);
 
   /**
@@ -70,6 +75,7 @@ export function useWebSocket() {
       playerId: localStorage.getItem(STORAGE_KEYS.PLAYER_ID),
       roomCode: localStorage.getItem(STORAGE_KEYS.ROOM_CODE),
       name: localStorage.getItem(STORAGE_KEYS.PLAYER_NAME),
+      rejoinToken: localStorage.getItem(STORAGE_KEYS.REJOIN_TOKEN),
     };
   }, []);
 
@@ -144,32 +150,25 @@ export function useWebSocket() {
       socketRef.current = socket;
 
       socket.onopen = () => {
-        console.log('✅ WebSocket connected');
-        console.log('Current status before setState:', status);
         setStatus('connected');
-        console.log('Status set to: connected');
         setError('');
         reconnectAttemptsRef.current = 0;
         reconnectDelayRef.current = WS_CONFIG.RECONNECT_DELAY_MIN;
 
         // 启动心跳
         startHeartbeat();
-        console.log('❤️ Heartbeat started');
 
-        // 尝试自动重新加入房间
+        // 尝试自动重新加入房间（带服务端签发的重连凭证）
         const savedState = getSavedState();
-        console.log('Saved state:', savedState);
-        if (savedState.playerId && savedState.roomCode) {
-          console.log('Attempting to rejoin room:', savedState.roomCode);
+        if (savedState.playerId && savedState.roomCode && savedState.rejoinToken) {
           socket.send(
             JSON.stringify({
               type: 'rejoin',
               playerId: savedState.playerId,
               code: savedState.roomCode,
+              rejoinToken: savedState.rejoinToken,
             })
           );
-        } else {
-          console.log('No saved room to rejoin');
         }
 
         onOpenCallbackRef.current?.(socket);
@@ -186,8 +185,7 @@ export function useWebSocket() {
           }
 
           // 处理 rejoin 失败 - 清除旧状态
-          if (message.type === 'error' && (message.message.includes('房间不存在') || message.message.includes('房间已关闭'))) {
-            console.log('Rejoin failed, clearing saved state');
+          if (message.type === 'error' && (message.message.includes('房间不存在') || message.message.includes('房间已关闭') || message.message.includes('重连验证失败'))) {
             clearState();
           }
 
@@ -204,8 +202,6 @@ export function useWebSocket() {
       };
 
       socket.onclose = (event) => {
-        console.log('🔴 WebSocket closed - Code:', event.code, 'Reason:', event.reason, 'Clean:', event.wasClean);
-        console.log('Socket state before close:', socketRef.current?.readyState);
         stopHeartbeat();
 
         // 如果是主动关闭，不重连
@@ -294,7 +290,10 @@ export function useWebSocket() {
     };
   }, [stopHeartbeat]);
 
-  return {
+  // 返回对象用 useMemo 固定引用，避免调用方 useEffect([ws]) 每渲染都重注册消息处理器
+  // 注意：socketRef.current 不触发渲染，返回的 socket 字段可能滞后；
+  // 判断连接状态请用 status（connected），不要用 socket 是否为 null
+  return useMemo(() => ({
     socket: socketRef.current,
     status,
     error,
@@ -305,5 +304,5 @@ export function useWebSocket() {
     savedState: getSavedState(),
     saveState,
     clearState,
-  };
+  }), [status, error, connect, disconnect, send, onMessage, getSavedState, saveState, clearState]);
 }

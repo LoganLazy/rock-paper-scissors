@@ -101,6 +101,10 @@ export function Punishment({
   };
 
   const displayResult = currentPunishment || wheelResult || tempResult;
+  // 防御：惩罚内容只渲染字符串，非字符串（如服务端漏网的非法数据）一律不渲染，
+  // 避免 React 因渲染对象子节点而抛错、导致整站被 ErrorBoundary 兜底
+  const displayLevel = typeof displayResult?.level === 'string' ? displayResult.level : '';
+  const displayText = typeof displayResult?.text === 'string' ? displayResult.text : '';
 
   return (
     <section className="card punishment-card">
@@ -121,8 +125,8 @@ export function Punishment({
       <div className={`wheel ${spinning ? 'spinning' : ''} ${wheelResult ? 'result-shown' : ''}`}>
         {displayResult ? (
           <div>
-            <strong>{displayResult.level}</strong>
-            <span>{displayResult.text}</span>
+            <strong>{displayLevel}</strong>
+            <span>{displayText}</span>
           </div>
         ) : (
           <div>甜蜜转盘</div>
