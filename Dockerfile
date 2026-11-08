@@ -40,6 +40,11 @@ EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8787/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
+# PM2 日志目录：ecosystem.config.cjs 把日志写到 logs/error.log 与 logs/output.log。
+# /app 是 root 复制进来的（COPY 默认属主 root），若不事先建好并交给 node 用户，
+# 以 node 身份运行的 PM2 会报 "Could not create folder" 后直接退出，容器无限重启。
+RUN mkdir -p /app/logs && chown node:node /app/logs
+
 # 以非 root 用户运行（node:20-alpine 自带 node 用户）
 USER node
 
