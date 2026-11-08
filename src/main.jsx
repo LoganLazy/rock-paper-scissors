@@ -165,14 +165,14 @@ function App() {
     setIsLoading(true);
     ws.connect((socket) => {
       socket.send(JSON.stringify({ type: 'create', name, bestOf }));
-    });
+    }, { skipAutoRejoin: true });
   };
 
   const handleJoinRoom = (name, code) => {
     setIsLoading(true);
     ws.connect((socket) => {
       socket.send(JSON.stringify({ type: 'join', name, code }));
-    });
+    }, { skipAutoRejoin: true });
   };
 
   const handleLeaveRoom = () => {
