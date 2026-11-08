@@ -1,5 +1,6 @@
 # 多阶段构建
-FROM node:18-alpine AS builder
+# 注意：vite 8 要求 Node ^20.19.0 || >=22.12.0，用 node:18 会在 npm run build 失败
+FROM node:20-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -17,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # 生产镜像
-FROM node:18-alpine
+FROM node:20-alpine
 
 # 设置工作目录
 WORKDIR /app
@@ -39,7 +40,7 @@ EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8787/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# 以非 root 用户运行（node:18-alpine 自带 node 用户）
+# 以非 root 用户运行（node:20-alpine 自带 node 用户）
 USER node
 
 # 启动服务
