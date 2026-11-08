@@ -5,7 +5,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Rock-Paper-Scissors Game', () => {
-  test('complete game flow', async ({ page, context }) => {
+  test('complete game flow', async ({ page, browser }) => {
     // 玩家1创建房间
     await page.goto('/');
 
@@ -25,8 +25,10 @@ test.describe('Rock-Paper-Scissors Game', () => {
 
     expect(roomCode).toHaveLength(6);
 
-    // 玩家2加入房间（新页面）
-    const page2 = await context.newPage();
+    // 玩家2加入房间（新浏览器上下文，独立存储，模拟另一台设备；
+    // 同一上下文会共享 localStorage，打开页面就会自动重连成玩家1）
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
     await page2.goto('/');
 
     await page2.fill('input[name="name"]', '玩家2');
@@ -49,6 +51,8 @@ test.describe('Rock-Paper-Scissors Game', () => {
     // 检查比分是否更新
     const scoreBoard = await page.locator('.score-card');
     await expect(scoreBoard).toBeVisible();
+
+    await context2.close();
 
     console.log('Game flow test completed successfully');
   });
@@ -79,5 +83,24 @@ test.describe('Rock-Paper-Scissors Game', () => {
     const width = await app.evaluate(el => el.clientWidth);
 
     expect(width).toBeLessThanOrEqual(375);
+  });
+
+  test('reload rejoins the room automatically', async ({ page }) => {
+    await page.goto('/');
+
+    // 创建房间
+    await page.fill('input[name="name"]', '重连玩家');
+    await page.click('button:has-text("创建房间")');
+
+    await page.waitForSelector('.room-card', { timeout: 5000 });
+    const roomCode = await page.locator('.room-card strong').textContent();
+    expect(roomCode).toHaveLength(6);
+
+    // 刷新页面，不点任何按钮，房间应自动回来（同一房间码）
+    await page.reload();
+    await page.waitForSelector('.room-card', { timeout: 5000 });
+    const roomCodeAfterReload = await page.locator('.room-card strong').textContent();
+
+    expect(roomCodeAfterReload).toBe(roomCode);
   });
 });

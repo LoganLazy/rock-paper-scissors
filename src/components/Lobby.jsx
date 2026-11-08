@@ -10,11 +10,12 @@ import { validateName, validateRoomCode } from '../utils/validation.js';
  *   onCreateRoom: (name: string, bestOf: number) => void,
  *   onJoinRoom: (name: string, code: string) => void,
  *   initialJoinCode?: string,
+ *   initialName?: string,
  *   isLoading?: boolean
  * }} props
  */
-export function Lobby({ onCreateRoom, onJoinRoom, initialJoinCode = '', isLoading = false }) {
-  const [name, setName] = useState('');
+export function Lobby({ onCreateRoom, onJoinRoom, initialJoinCode = '', initialName = '', isLoading = false }) {
+  const [name, setName] = useState(initialName);
   const [bestOf, setBestOf] = useState(3);
   const [joinCode, setJoinCode] = useState(initialJoinCode);
   const [nameError, setNameError] = useState('');

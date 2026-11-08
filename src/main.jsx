@@ -123,6 +123,20 @@ function App() {
     });
   }, [ws]);
 
+  // 打开页面时自动重连回旧房间：本地存着重连凭证就直接连上，连接建立后
+  // useWebSocket 会自动发 rejoin。没有存凭证时什么都不做，停留在大厅。
+  // 放在消息处理器注册之后，确保重连回来的 joined/state 消息有人处理。
+  // 只执行一次（ws 对象会随连接状态变化而变化，用 ref 守门）。
+  const autoRejoinDoneRef = useRef(false);
+  useEffect(() => {
+    if (autoRejoinDoneRef.current) return;
+    autoRejoinDoneRef.current = true;
+    const saved = ws.savedState;
+    if (saved?.playerId && saved?.roomCode && saved?.rejoinToken) {
+      ws.connect();
+    }
+  }, [ws]);
+
   const getCurrentPlayerName = (room, playerId) => {
     return room?.players.find((p) => p.id === playerId)?.name || '';
   };
@@ -225,8 +239,11 @@ function App() {
     showToast('已复制到剪贴板', 'success');
   };
 
-  // 从 URL 获取初始房间码
-  const initialJoinCode = new URLSearchParams(window.location.search).get('room')?.toUpperCase() || '';
+  // 从 URL 获取初始房间码；没有邀请链接时，用本地存着的房间码，
+  // 这样重连失败落回大厅时也能一键重试加入同一个房间
+  const urlJoinCode = new URLSearchParams(window.location.search).get('room')?.toUpperCase() || '';
+  const initialJoinCode = urlJoinCode || ws.savedState?.roomCode || '';
+  const initialName = ws.savedState?.name || '';
 
   // 注册 Service Worker (PWA 支持)
   useEffect(() => {
@@ -267,6 +284,7 @@ function App() {
           onCreateRoom={handleCreateRoom}
           onJoinRoom={handleJoinRoom}
           initialJoinCode={initialJoinCode}
+          initialName={initialName}
           isLoading={isLoading}
         />
       )}
