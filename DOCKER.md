@@ -292,12 +292,12 @@ services:
 
 ### 2. 使用非 root 用户
 
-Dockerfile 已使用 `node:18-alpine` 自带的 `node` 用户运行（`USER node`），无需再创建用户。
+Dockerfile 已使用 `node:20-alpine` 自带的 `node` 用户运行（`USER node`），无需再创建用户。
 
 ### 3. 定期更新基础镜像
 
 ```bash
-docker pull node:18-alpine
+docker pull node:20-alpine
 docker pull nginx:alpine
 docker-compose build --no-cache
 ```
