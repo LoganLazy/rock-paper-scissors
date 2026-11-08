@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { copyToClipboard, getRoomShareLink } from '../utils/share.js';
 
 /**
- * @param {{ roomCode: string, onCopySuccess: () => void }} props
+ * @param {{ roomCode: string, onCopySuccess: () => void, onLeaveRoom: () => void }} props
  */
-export function RoomInfo({ roomCode, onCopySuccess }) {
+export function RoomInfo({ roomCode, onCopySuccess, onLeaveRoom }) {
   const [copying, setCopying] = useState(false);
 
   const handleCopy = async () => {
@@ -32,9 +32,14 @@ export function RoomInfo({ roomCode, onCopySuccess }) {
         <span className="muted">房间码</span>
         <strong>{roomCode}</strong>
       </div>
-      <button onClick={handleCopy} disabled={copying}>
-        {copying ? '已复制' : '复制链接'}
-      </button>
+      <div className="room-actions">
+        <button onClick={handleCopy} disabled={copying}>
+          {copying ? '已复制' : '复制链接'}
+        </button>
+        <button onClick={onLeaveRoom}>
+          离开房间
+        </button>
+      </div>
     </section>
   );
 }

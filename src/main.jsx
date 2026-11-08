@@ -176,6 +176,11 @@ function App() {
   };
 
   const handleLeaveRoom = () => {
+    // 必须先断开连接：服务端的“在房间中”状态是按连接记的，
+    // 只清本地状态不关 socket，下一条 join 仍会在同一条连接上被拒绝。
+    // 断开后服务端把该玩家标为离线；下次 join 会建新连接，不再受旧房间影响。
+    // clearState 则阻止下次连接时自动 rejoin 回旧房间。
+    ws.disconnect();
     ws.clearState();
     setRoom(null);
     setRoomCode('');
@@ -268,7 +273,7 @@ function App() {
 
       {room && (
         <>
-          <RoomInfo roomCode={roomCode} onCopySuccess={handleCopySuccess} />
+          <RoomInfo roomCode={roomCode} onCopySuccess={handleCopySuccess} onLeaveRoom={handleLeaveRoom} />
 
           <ScoreBoard
             myName={me?.name}

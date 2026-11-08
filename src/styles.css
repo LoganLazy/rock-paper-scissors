@@ -186,6 +186,11 @@ label {
   letter-spacing: 0.12em;
 }
 
+.room-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .muted {
   color: #85697a;
   font-size: 14px;
