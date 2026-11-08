@@ -69,8 +69,9 @@ npm run server   # 后端 (WebSocket server)
 
 ### 方式二：Docker 部署（推荐）
 
-**一键启动**
+**一键启动**（先构建前端，Nginx 靠挂载 `./dist` 提供页面）
 ```bash
+npm ci && npm run build
 docker-compose up -d
 ```
 
@@ -285,6 +286,9 @@ sudo systemctl reload nginx
 # 克隆项目
 git clone https://github.com/LoganLazy/rock-paper-scissors.git
 cd rock-paper-scissors
+
+# 先构建前端（Nginx 靠挂载 ./dist 提供页面，跳过则页面 404）
+npm ci && npm run build
 
 # 启动服务
 docker-compose up -d

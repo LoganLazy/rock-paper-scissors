@@ -4,6 +4,16 @@
 
 ### 方式一：使用 Docker Compose（推荐）
 
+#### 0. 先构建前端（必须）
+
+Nginx 容器通过挂载 `./dist` 提供前端页面，而 `dist/` 未入库，因此启动前必须先在宿主机上构建一次：
+
+```bash
+npm ci && npm run build
+```
+
+若跳过这一步，Docker 会自动创建一个空目录挂载进来，页面将全部返回 404（后端 8787 本身仍可正常启动）。
+
 #### 1. 启动服务
 
 ```bash
@@ -48,6 +58,8 @@ docker run -d \
   --restart unless-stopped \
   rock-paper-scissors:latest
 ```
+
+> 注意：单独运行 app 容器只提供 WebSocket 后端（8787）与 `/health`，不提供前端页面。页面需由 Nginx（见方式一，挂载 `./dist`）或任意静态服务器提供 `dist/`。
 
 #### 3. 查看日志
 
