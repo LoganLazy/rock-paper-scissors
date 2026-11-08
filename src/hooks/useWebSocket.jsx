@@ -41,6 +41,11 @@ export function useWebSocket() {
   const reconnectAttemptsRef = useRef(0);
   const reconnectDelayRef = useRef(WS_CONFIG.RECONNECT_DELAY_MIN);
   const intentionalCloseRef = useRef(false);
+  // 显式建房/加房时跳过一次自动 rejoin：连接打开后先发 rejoin 会抢占
+  // 本次显式操作（同一条连接只能在一个房间，join 会被服务端以
+  // “已在房间中，请先离开”拒绝）。该标志只消费一次，断线重连时
+  // 自动 rejoin 照常工作。
+  const skipAutoRejoinRef = useRef(false);
 
   const [status, setStatus] = useState('disconnected');
   const [error, setError] = useState('');
@@ -124,8 +129,11 @@ export function useWebSocket() {
 
   /**
    * 连接 WebSocket
+   * @param {Function} onOpen 连接建立后调用（发送本次显式操作）
+   * @param {{ skipAutoRejoin?: boolean }} [options] skipAutoRejoin 为 true 时，
+   *   本次连接不发自动 rejoin——用于显式建房/加房，让本次操作优先于本地存着的旧房间
    */
-  const connect = useCallback((onOpen) => {
+  const connect = useCallback((onOpen, options) => {
     // 如果已经连接，直接调用回调
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       onOpen?.(socketRef.current);
@@ -134,6 +142,9 @@ export function useWebSocket() {
 
     // 保存回调以便重连时使用
     onOpenCallbackRef.current = onOpen;
+
+    // 显式操作本次跳过自动 rejoin；标志只消费一次
+    skipAutoRejoinRef.current = Boolean(options?.skipAutoRejoin);
 
     // 清除之前的重连定时器
     if (reconnectTimeoutRef.current) {
@@ -158,9 +169,12 @@ export function useWebSocket() {
         // 启动心跳
         startHeartbeat();
 
-        // 尝试自动重新加入房间（带服务端签发的重连凭证）
+        // 尝试自动重新加入房间（带服务端签发的重连凭证）；
+        // 显式建房/加房的本次连接跳过 rejoin，让本次操作优先
+        const skipRejoin = skipAutoRejoinRef.current;
+        skipAutoRejoinRef.current = false;
         const savedState = getSavedState();
-        if (savedState.playerId && savedState.roomCode && savedState.rejoinToken) {
+        if (!skipRejoin && savedState.playerId && savedState.roomCode && savedState.rejoinToken) {
           socket.send(
             JSON.stringify({
               type: 'rejoin',

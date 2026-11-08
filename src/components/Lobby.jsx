@@ -60,6 +60,7 @@ export function Lobby({ onCreateRoom, onJoinRoom, initialJoinCode = '', isLoadin
       <label>
         你的昵称
         <input
+          name="name"
           value={name}
           onChange={(e) => handleNameChange(e.target.value)}
           placeholder="比如：玩家A"
